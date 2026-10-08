@@ -1,7 +1,15 @@
-<div id="main">
-    <h1>{{name()}}</h1>
-    <h3>{{srcLanguage()}} -> {{destLanguage()}}</h3>
-    <p>@for (item of listSrc(); track $index) {
-        <p class="srcWord">{{item}}</p>
-    }</p>
+<div id="main-fcb">
+    <div id="flashcard-view">
+        <h1>{{name()}}</h1>
+        <h3>{{srcLanguage()}} -> {{destLanguage()}}</h3>
+        <p>@for (item of listSrc(); track $index) {
+            <p class="srcWord">{{item}}</p>
+        }</p>
+        <button id="startbtn" (click)="beginQuiz()">시작</button>
+    </div>
+    <app-quiz
+    id="quizview" class="hidden"
+    [listSrc]="listSrc()"
+    [listDest]="listDest()"
+    ></app-quiz>
 </div>

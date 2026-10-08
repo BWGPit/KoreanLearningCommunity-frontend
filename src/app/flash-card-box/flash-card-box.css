@@ -1,4 +1,4 @@
-#main {
+#main-fcb {
     border-style: outset;
     width: fit-content;
     height: fit-content;
@@ -8,4 +8,9 @@
 .srcWord {
     display: inline-flex;
     margin-left: 5px;
+}
+
+.hidden {
+    visibility: hidden;
+    display: none;
 }

@@ -1,11 +1,12 @@
 import { Component, signal, input, inject, computed } from '@angular/core';
 import { GetBox } from '../get-box';
+import { Quiz } from '../quiz/quiz';
 
 export type Language = "kr" | "en" | "it"
 export type Mapping = [string[], string[]]
 
 @Component({
-  imports: [],
+  imports: [Quiz],
   selector: 'app-flash-card-box',
   styleUrl: './flash-card-box.css',
   templateUrl: './flash-card-box.html',
@@ -17,4 +18,9 @@ export class FlashCardBox {
   mapping = input.required<Mapping>()
   listSrc = computed(() => this.mapping()[0])
   listDest = computed(() => this.mapping()[1])
+
+  beginQuiz() {
+    document.getElementById("flashcard-view")?.classList.add("hidden")
+    document.getElementById("quizview")?.classList.remove("hidden")
+  }
 }
