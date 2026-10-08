@@ -1,5 +1,5 @@
 <div id="main-fcb">
-    <div id="flashcard-view">
+    <div id="flashcard-view" class={{parentClass()}}>
         <h1>{{name()}}</h1>
         <h3>{{srcLanguage()}} -> {{destLanguage()}}</h3>
         <p>@for (item of listSrc(); track $index) {
@@ -8,8 +8,10 @@
         <button id="startbtn" (click)="beginQuiz()">시작</button>
     </div>
     <app-quiz
-    id="quizview" class="hidden"
+    class={{childClass()}}
+    id="quizview"
     [listSrc]="listSrc()"
     [listDest]="listDest()"
     ></app-quiz>
+    <button (click)="exitQuiz()" class={{childClass()}}>나가기</button>
 </div>

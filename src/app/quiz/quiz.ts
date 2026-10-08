@@ -1,5 +1,6 @@
 import { TmplAstUnknownBlock } from '@angular/compiler';
-import { Component, computed, input, OnInit, signal } from '@angular/core';
+import { Component, computed, input, OnInit, signal, model } from '@angular/core';
+import { IsHidden } from '../flash-card-box/flash-card-box';
 
 export type QuizMode = "repetition" | "finite" | "sequential"
 
@@ -56,18 +57,11 @@ export class Quiz implements OnInit {
   listSrc = input.required<string[]>()
   listDest = input.required<string[]>()
   qm = computed(() => new QuizManager(this.listSrc(), this.listDest()))
-
-  private print(elementId: string, text: string | null) {
-    // Prints to the innerText of an element
-    let cqelement: HTMLElement | null = document.getElementById(elementId)
-    if (cqelement && text) {
-      cqelement.innerText = text
-    }
-  }
+  question = signal<string>("뭔가 있지")
 
   ask(): void {
     let thisQuestion: string | null = this.qm().ask()
-    this.print("current-question", thisQuestion)
+    if (thisQuestion) this.question.set(thisQuestion)
   }
 
   answer(): void {
@@ -80,13 +74,8 @@ export class Quiz implements OnInit {
   }
 
   reset(): void {
+    console.log("RESET")
     this.qm = computed(() => new QuizManager(this.listSrc(), this.listDest()))
     this.ask()
-  }
-
-  exit(): void {
-    document.getElementById("flashcard-view")?.classList.remove("hidden")
-    document.getElementById("quizview")?.classList.add("hidden")
-    this.reset()
   }
 }
