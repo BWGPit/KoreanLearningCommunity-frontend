@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, signal, input, inject, computed } from '@angular/core';
+import { GetBox } from '../get-box';
 
-type Language = "kr" | "en" | "it"
-type Mapping = [string[], string[]]
+export type Language = "kr" | "en" | "it"
+export type Mapping = [string[], string[]]
 
 @Component({
   imports: [],
@@ -10,11 +11,10 @@ type Mapping = [string[], string[]]
   templateUrl: './flash-card-box.html',
 })
 export class FlashCardBox {
-  srcLanguage: Language = "kr"
-  destLanguage: Language = "it"
-  name: string = "Direzioni"
-  listSrc: string[] = ["북", "남", "동", "서"]
-  listDest: string[] = ["Nord", "Sud", "Est", "Ovest"]
-  mapping: Mapping = [this.listSrc, this.listDest]
-  // TODO: ACTUALLY LOAD THESE DATA FROM DATABASE
+  srcLanguage = input.required<Language>()
+  destLanguage = input.required<Language>()
+  name = input.required<string>()
+  mapping = input.required<Mapping>()
+  listSrc = computed(() => this.mapping()[0])
+  listDest = computed(() => this.mapping()[1])
 }

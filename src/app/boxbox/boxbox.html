@@ -1,0 +1,10 @@
+<div class="boxboxdiv">
+    @for (item of boxes; track $index) {
+        <app-flash-card-box 
+        [srcLanguage]=boxes[$index].srcLanguage
+        [destLanguage]=boxes[$index].destLanguage
+        [name]=boxes[$index].name
+        [mapping]=boxes[$index].mapping
+        ></app-flash-card-box>
+    }
+</div>

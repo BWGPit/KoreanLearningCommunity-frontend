@@ -1,9 +1,9 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { FlashCardBox } from './flash-card-box/flash-card-box';
+import { Boxbox } from './boxbox/boxbox';
 
 @Component({
-  imports: [RouterOutlet, FlashCardBox],
+  imports: [RouterOutlet, Boxbox],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',

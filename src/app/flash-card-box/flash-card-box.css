@@ -1,0 +1,11 @@
+#main {
+    border-style: outset;
+    width: fit-content;
+    height: fit-content;
+    padding: 20px;
+}
+
+.srcWord {
+    display: inline-flex;
+    margin-left: 5px;
+}
