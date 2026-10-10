@@ -1,11 +1,13 @@
 <div id="main-quiz">
+    <p>{{counterString()}}</p>
     <p id="current-question">{{question()}}</p>
     <input
     id="answer"
+    [(ngModel)]="writtenValue"
     (keydown.enter)="answer()"
     >
     
     <button (click)="answer()">></button>
-    <p id="result">이게 뭐야?</p>
+    <p id="result">{{result()}}</p>
     <br>
 </div>
