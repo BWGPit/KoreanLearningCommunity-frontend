@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { AfterViewInit, Component, inject, input, OnInit } from '@angular/core';
 import { FlashCardBox } from '../flash-card-box/flash-card-box';
 import { FCBox, GetBox } from '../get-box';
 
@@ -8,12 +8,13 @@ import { FCBox, GetBox } from '../get-box';
   styleUrl: './boxbox.css',
   templateUrl: './boxbox.html',
 })
-export class Boxbox {
-  limit: number = 1
+export class Boxbox implements OnInit {
+  limit = input.required<number>()
   boxes: FCBox[] = []
   private gb = inject(GetBox)
-  constructor() {
-    for (let i = 0; i < this.limit; i++) {
+
+  ngOnInit(): void {
+    for (let i = 0; i < this.limit(); i++) {
       this.boxes.push(this.gb.getbox(String(i)))
     }
   }

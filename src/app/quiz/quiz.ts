@@ -1,6 +1,7 @@
 import { TmplAstUnknownBlock } from '@angular/compiler';
 import { Component, computed, input, OnInit, signal, model, Signal } from '@angular/core';
 import { FormsModule, NgModel } from '@angular/forms';
+import { printPercent, randint } from '../utils';
 export type QuizMode = "repetition" | "finite" | "sequential"
 
 export class QuizException extends Error {}
@@ -8,13 +9,13 @@ export class QuizException extends Error {}
 export class QuizManager {
   listSrc: string[]
   listDest: string[]
-  mode: QuizMode = "sequential"
+  mode: QuizMode
 
   private i: number = 0
   private _correctCount: number = 0
   private _wordCount: number = 0
 
-  constructor(listSrc: string[], listDest: string[]) {
+  constructor(listSrc: string[], listDest: string[], mode: QuizMode = "sequential") {
     if (listSrc.length == 0 || listDest.length == 0) {
       throw new QuizException("Cannot use an empty array")
     }
@@ -23,6 +24,7 @@ export class QuizManager {
     }
     this.listSrc = listSrc
     this.listDest = listDest
+    this.mode = mode
   }
 
   get correctCount(): number {
@@ -33,12 +35,29 @@ export class QuizManager {
     return this._wordCount
   }
 
+  get accuracy(): number {
+    if (this._wordCount == 0) return 1 // A 0-question accuracy is trivially 100%
+    if (this._correctCount == 0) return 0
+    return this._correctCount/this._wordCount
+  }
+
+  get completion(): number {
+    if (this._wordCount == 0) return 0
+    return this._wordCount/this.listSrc.length
+  }
+
+  private updateCounter() {
+    if (this.mode == "sequential") {
+      this.i++
+    } else if (this.mode == "repetition") {
+      this.i = randint(this.listSrc.length, 0)
+    }
+  }
+
   ask(): string | null {
     // Asks a question
-    if (this.mode == "sequential") {
-      if (this.mode == "sequential" && this.i < this.listSrc.length) {
+    if (((this.mode == "sequential" || this.mode == "finite") && this.i < this.listSrc.length) || this.mode == "repetition") {
         return this.listSrc[this.i]
-      }
     }
     // TODO: ALTRI CASI IN CUI AGGIORNA COMUNQUE LA i MA IN MODO DIVERSO (RANDOMICO)
     // If mode is finite (or sequential) it stops at the end of the array
@@ -49,7 +68,7 @@ export class QuizManager {
     // Returns whether the answer was correct and the correct answer
     this._wordCount++ // another word has been answered
     let correct: string = this.listDest[this.i]
-    this.i++ // updates the counter
+    this.updateCounter()
     if (a.toLowerCase() == correct.toLowerCase()) {
       this._correctCount++
       return [true, correct]
@@ -67,19 +86,31 @@ export class QuizManager {
 export class Quiz implements OnInit {
   listSrc = input.required<string[]>()
   listDest = input.required<string[]>()
-  qm = computed(() => new QuizManager(this.listSrc(), this.listDest()))
+  qm = computed(() => new QuizManager(this.listSrc(), this.listDest(), "repetition"))
   writtenValue: string = ""
   counterString = signal<string>("")
   question = signal<string>("뭔가 있지")
   result = signal<string>("이게 뭐야?")
 
+  private setCounterString(): void {
+    let cs: string = (
+      // 정확 = accuracy
+      "정확: " + printPercent(this.qm().accuracy) + " (" + 
+      String(this.qm().correctCount) + "/" + String(this.qm().wordCount) + ")"
+    )
+    this.counterString.set(cs)
+  }
+
   ask(): void {
-    this.counterString.set(String(this.qm().correctCount) + "/" + String(this.qm().wordCount))
+    this.setCounterString()
     let thisQuestion: string | null = this.qm().ask()
     if (thisQuestion) this.question.set(thisQuestion)
   }
 
   answer(): void {
+    // "base case" to prevent typos
+    if (this.writtenValue.replaceAll(" ", "") == "") return
+
     let [isValid, correctAnswer]: [boolean, string] = this.qm().answer(this.writtenValue)
     if (isValid) {
       this.result.set("정답!")
