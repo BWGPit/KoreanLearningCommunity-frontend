@@ -1,5 +1,9 @@
-import { Service } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Language, Mapping } from './flash-card-box/flash-card-box';
+import { HttpClient, HttpHandler } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
+
+const APIURL = "https://koreanlearningcommunity.fastapicloud.dev/"
 
 export interface FCBox {
     srcLanguage: Language
@@ -10,23 +14,12 @@ export interface FCBox {
 
 @Service()
 export class GetBox {
-    getbox(box_id: string): FCBox {
+    private http = inject(HttpClient)
+    async getbox(box_id: string): Promise<FCBox> {
         // TODO: farlo funzionare con un database
-        // let tb: FCBox = {
-        //     srcLanguage: "kr",
-        //     destLanguage: "it",
-        //     name: "Direzioni",
-        //     mapping: [["북", "남", "동", "서"], ["Nord", "Sud", "Est", "Ovest"]]
-        // }
-        let tb: FCBox = {
-            srcLanguage: "kr",
-            destLanguage: "it",
-            name: "Lezione 1 (prima parte)",
-            mapping: [
-                ["전신", "놀라다", "속상하다", "힘들다", "농구", "배구", "지구", "맑다", "흐리다", "비가 오다", "눈이 오다", "시원하다"],
-                ["tutto", "rimanere sorpreso", "essere turbato", "faticoso", "basket", "pallavolo", "Terra", "sereno", "nuvoloso", "piovere", "nevicare", "rinfrescante"]
-            ]
-        }
-        return tb
+        
+        let endpoint = "getbox"
+
+        return lastValueFrom(this.http.get<FCBox>(APIURL + endpoint))
     }
 }
