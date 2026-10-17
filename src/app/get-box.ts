@@ -15,11 +15,8 @@ export interface FCBox {
 @Service()
 export class GetBox {
     private http = inject(HttpClient)
-    async getbox(box_id: string): Promise<FCBox> {
-        // TODO: farlo funzionare con un database
-        
+    async getbox(box_id: string): Promise<FCBox> {        
         let endpoint = "getbox"
-
         return lastValueFrom(this.http.get<FCBox>(APIURL + endpoint))
     }
 }
